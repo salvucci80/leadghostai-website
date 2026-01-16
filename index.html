@@ -945,7 +945,7 @@
             submitButton.disabled = true;
             
             const formData = new FormData(this);
-            formData.append(e850c5af-fc4f-4e52-bc53-45eed2d846da);
+            formData.append('access_key', 'e850c5af-fc4f-4e52-bc53-45eed2d846da');
             formData.append('subject', 'New LeadGhostAI Inquiry');
             formData.append('from_name', 'LeadGhostAI Website');
             
@@ -1115,62 +1115,71 @@
         }
 
         async function getAIResponse(userMessage) {
-            const systemPrompt = `You are a helpful customer service assistant for LeadGhostAI, a company that creates custom Google Gems (AI agents). 
-
-PRICING INFORMATION:
-1. Professional Agent - $597
-   - Multi-function agent
-   - Up to 4 revision rounds
-   - Complete documentation + video
-   - 10 days delivery
-   - Priority support
-   - 1 month of adjustments
-
-2. Starter Agent - $297
-   - Single-purpose agent
-   - Up to 2 revision rounds
-   - Basic documentation
-   - 7 days delivery
-   - Email support
-
-3. Pre-built Gems Subscription - $10/month
-   - Access to pre-built Google Gems
-   - Limited usage
-   - Perfect for trying out our Gems
-
-PAYMENT: We use Stripe for secure payments.
-
-SERVICES:
-- Custom Google Gems development tailored to specific business needs
-- Pre-built Gems for common use cases
-- Consulting and training on Google Gems
-
-CONTACT: leadghostai@gmail.com
-
-Keep responses concise (2-3 sentences max), friendly, and professional. If asked about something outside your knowledge, direct them to email leadghostai@gmail.com. Always be helpful and encouraging about how Google Gems can transform their workflow.`;
-
-            const response = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: 'claude-sonnet-4-20250514',
-                    max_tokens: 1000,
-                    system: systemPrompt,
-                    messages: [
-                        { role: 'user', content: userMessage }
-                    ]
-                })
-            });
-
-            const data = await response.json();
+            // Simple pattern matching for common questions
+            const lowerMessage = userMessage.toLowerCase();
             
-            if (data.content && data.content[0] && data.content[0].text) {
-                return data.content[0].text;
-            } else {
-                throw new Error('Invalid response');
+            // Pricing questions
+            if (lowerMessage.includes('price') || lowerMessage.includes('pricing') || lowerMessage.includes('cost') || lowerMessage.includes('how much')) {
+                return "We offer three options: Professional Agent ($597) - multi-function with 4 revisions, 10 days delivery, priority support, and 1 month adjustments. Starter Agent ($297) - single-purpose with 2 revisions and 7 days delivery. Or try our Pre-built Gems for just $10/month with limited usage!";
             }
+            
+            // Package details
+            if (lowerMessage.includes('package') || lowerMessage.includes('include') || lowerMessage.includes('what do i get') || lowerMessage.includes('difference')) {
+                return "Professional Agent includes multi-function capabilities, up to 4 revision rounds, complete documentation + video, 10 days delivery, priority support, and 1 month of adjustments. Starter Agent has single-purpose functionality, 2 revisions, basic documentation, and 7 days delivery with email support.";
+            }
+            
+            // Timeline/delivery
+            if (lowerMessage.includes('how long') || lowerMessage.includes('timeline') || lowerMessage.includes('delivery') || lowerMessage.includes('when')) {
+                return "Professional Agents are delivered in 10 days, Starter Agents in 7 days. Both include revision rounds to ensure you get exactly what you need. Pre-built Gems are available immediately upon subscription!";
+            }
+            
+            // Custom development
+            if (lowerMessage.includes('custom') || lowerMessage.includes('bespoke') || lowerMessage.includes('tailored')) {
+                return "Our custom Google Gems are built specifically for your business needs! We handle everything from requirements gathering to deployment, with documentation and support included. Would you like to discuss your specific use case?";
+            }
+            
+            // Pre-built gems
+            if (lowerMessage.includes('pre-built') || lowerMessage.includes('prebuilt') || lowerMessage.includes('subscription') || lowerMessage.includes('$10')) {
+                return "Our $10/month subscription gives you access to pre-built Google Gems with limited usage - perfect for trying out our Gems before committing to custom development. It's a great way to see the value AI agents can bring to your workflow!";
+            }
+            
+            // Payment
+            if (lowerMessage.includes('payment') || lowerMessage.includes('pay') || lowerMessage.includes('stripe')) {
+                return "We use Stripe for secure payment processing. You can pay with credit card, debit card, or other methods supported by Stripe. Payment is collected before we begin development.";
+            }
+            
+            // Support/revisions
+            if (lowerMessage.includes('support') || lowerMessage.includes('revision') || lowerMessage.includes('changes') || lowerMessage.includes('adjust')) {
+                return "Professional Agent includes priority support and up to 4 revision rounds plus 1 month of adjustments. Starter Agent includes email support and 2 revision rounds. We're committed to making sure you're completely satisfied!";
+            }
+            
+            // What are Google Gems
+            if (lowerMessage.includes('what are') || lowerMessage.includes('what is') || lowerMessage.includes('explain')) {
+                return "Google Gems are custom AI agents that can automate tasks, answer questions, analyze data, and more - all tailored to your specific business needs. Think of them as your personal AI assistant that knows your business inside and out!";
+            }
+            
+            // Getting started
+            if (lowerMessage.includes('start') || lowerMessage.includes('begin') || lowerMessage.includes('sign up') || lowerMessage.includes('get started')) {
+                return "Getting started is easy! Just fill out the contact form below or email us at leadghostai@gmail.com. We'll discuss your needs, recommend the best package, and get your custom Gem built. Ready to transform your workflow?";
+            }
+            
+            // Contact/talk to human
+            if (lowerMessage.includes('contact') || lowerMessage.includes('email') || lowerMessage.includes('talk') || lowerMessage.includes('human')) {
+                return "You can reach us directly at leadghostai@gmail.com! We typically respond within a few hours and would love to discuss your specific needs and how our Google Gems can help your business.";
+            }
+            
+            // Greetings
+            if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+                return "Hello! I'm here to help you learn about LeadGhostAI's Google Gems services. Would you like to know about our pricing, what's included in each package, or how custom development works?";
+            }
+            
+            // Thanks
+            if (lowerMessage.includes('thank') || lowerMessage.includes('thanks')) {
+                return "You're welcome! If you have any other questions about our Google Gems services, feel free to ask or reach out to leadghostai@gmail.com. We're here to help!";
+            }
+            
+            // Default response
+            return "That's a great question! For detailed information about that, please email us at leadghostai@gmail.com and we'll give you a comprehensive answer. In the meantime, I can help with questions about our pricing, packages, timelines, or services!";
         }
     </script>
 </body>
